@@ -9,7 +9,7 @@ fun main() {
 
 class EchoFunction : Function {
     override fun onCall(request: Request, headers: List<Header>): String {
-        return request.requestContent
+        return request.content
     }
 
 }
