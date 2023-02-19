@@ -114,6 +114,11 @@ func (bs *BinaryServer) SpecializeHandler(w http.ResponseWriter, r *http.Request
 		HttpResponseWithError(w, http.StatusBadRequest, fmt.Errorf("failed to write file: %w", err))
 		return
 	}
+	cmd := exec.Command("chmod", "777", codePath)
+	if err = cmd.Run(); err != nil {
+		HttpResponseWithError(w, http.StatusBadRequest, fmt.Errorf("failed to make file executable: %w", err))
+		return
+	}
 	bs.internalCodePath = codePath
 	log.Printf("BinaryServer: %#v\n", bs)
 	specialized = true
@@ -139,9 +144,7 @@ func (bs *BinaryServer) InvocationHandler(w http.ResponseWriter, r *http.Request
 	}
 
 	// Future: could be improved by keeping subprocess open while environment is specialized
-	cmd := exec.Command("chmod", "777", bs.internalCodePath)
-	cmd.Start()
-	cmd = exec.Command("/bin/sh", "-c", bs.internalCodePath)
+	cmd := exec.Command("/bin/sh", "-c", bs.internalCodePath)
 	cmd.Env = execEnv.ToStringEnv()
 
 	stdinPipe, err := cmd.StdinPipe()
