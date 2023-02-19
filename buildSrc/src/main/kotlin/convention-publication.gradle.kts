@@ -54,8 +54,6 @@ publishing {
 
     // Configure all publications
     publications.withType<MavenPublication> {
-        // Stub javadoc.jar artifact
-        artifact(javadocJar.get())
 
         // Provide artifacts information requited by Maven Central
         pom {
